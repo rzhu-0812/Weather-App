@@ -1,10 +1,6 @@
-import os
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-
-api_key = os.getenv("OPENWEATHER_API_KEY")
+api_key = "API_KEY"
 
 user_input = input("Enter city: ")
 
