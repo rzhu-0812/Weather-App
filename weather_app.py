@@ -1,9 +1,10 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-api_key = "API KEY"
+load_dotenv()
 
-if api_key is None:
-    raise ValueError("No API key found in environment variables")
+api_key = os.getenv("OPENWEATHER_API_KEY")
 
 user_input = input("Enter city: ")
 
