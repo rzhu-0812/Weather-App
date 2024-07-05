@@ -1,18 +1,21 @@
 import requests
 import os
+from geopy.geocoders import Nominatim
 import customtkinter as ctk
-from io import BytesIO
 from PIL import Image
+
+geolocator = Nominatim(user_agent='geoapiExercises')
 
 user_input = ''
 units = 'metric'
-api_key = 'API_KEY'
+api_key = 'API KEY'
+city_location = ''
+coordinates = ''
 
 location_info = {
     'country': '',
     'city': '',
     'weather': '',
-    'description': '',
     'temp': '',
     'humidity': '',
     'air_pressure': '',
@@ -32,23 +35,13 @@ wind_direction_img = {
     'NW': 'NW.png'
 }
 
-def getInfo():
+def get_weather_info():
     try:
         weather_data = requests.get(
-            f'https://api.openweathermap.org/data/2.5/weather?q={user_input}&units={units}&APPID={api_key}')
+            f'https://api.tomorrow.io/v4/weather/forecast?location={coordinates}&apikey={api_key}&units={units}')
         weather_data.raise_for_status()
         data = weather_data.json()
 
-        location_info['city'] = data['name']
-        location_info['country'] = data['sys']['country']
-        location_info['weather'] = data['weather'][0]['main']
-        location_info['description'] = data['weather'][0]['description']
-        location_info['temp'] = round(data['main']['temp'])
-        location_info['humidity'] = data['main']['humidity']
-        location_info['air_pressure'] = data['main']['pressure']
-        location_info['wind_speed'] = data['wind']['speed']
-        location_info['wind_deg'] = data['wind']['deg']
-        location_info['icon_code'] = data['weather'][0]['icon']
 
         return ''
 
@@ -80,7 +73,7 @@ def getWeatherImage():
     
     weather_icon.configure(image=ctk_img)
 
-def getWindImage(angle):
+def getWindImage():
     global location_info
 
     cardinal_direction = getWindDirection(location_info['wind_deg'])
@@ -105,9 +98,9 @@ def getHumidityImage():
     humidity_icon.configure(image=ctk_img)
 
 def outputData():
-    global location_info, units
+    global location_info, units, city_location
 
-    city_label.configure(text=f'{location_info['city']}, {location_info['country']}')
+    city_label.configure(text=f'{city_location}')
 
     temp_frame.configure(fg_color='gray86')
     wind_frame.configure(fg_color='gray86')
@@ -115,7 +108,7 @@ def outputData():
     humidity_frame.configure(fg_color='gray86')
 
     getWeatherImage()
-    getWindImage(location_info['wind_deg'])
+    getWindImage()
     getPressureImage()
     getHumidityImage()
 
@@ -128,12 +121,23 @@ def outputData():
     else:
         temp_label.configure(text=f'{location_info['temp']}°F')
         wind_speed.configure(text=f'{location_info['wind_speed']}mph {getWindDirection(location_info['wind_deg'])}')
+
+def getCityInfo(user_location):
+    global geolocator, coordinates, city_location
+
+    location = geolocator.geocode(user_location)
+    coordinates = f'{location.latitude}, {location.longitude}'
+
+    location = geolocator.reverse((location.latitude, location.longitude), exactly_one=True)
+    city_location = location.address
     
 def retrieveInput():
     global user_input
 
     user_input = entry.get()
-    weather_data = getInfo()
+    weather_data = get_weather_info()
+
+    getCityInfo(user_input)
 
     if weather_data:
         error_label.configure(text=weather_data)
