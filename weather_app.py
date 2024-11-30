@@ -6,7 +6,7 @@ from PIL import Image
 
 user_input = ''
 units = 'metric'
-api_key = '6e3ec1b664b5f16bc56eedbaba2cb1e4'
+api_key = '' # The API key I accidentally published is now inactive
 
 weather_icon_image = None
 wind_icon_image = None

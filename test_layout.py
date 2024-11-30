@@ -10,9 +10,7 @@ WEATHER_ICON_SIZE = (150, 150)
 
 THEME_FILE = 'theme.json'
 SEARCH_IMG = 'search.png'
-WEATHER_IMG = '01d.png'
-
-DEGREE_SYMBOL = str(b'\xc2\xb0', 'utf8')
+WEATHER_IMG = '1000d.png'
 
 FONT = ('Monaspace Neon', 15)
 FONT_BOLD = ('Monaspace Neon', 15, 'bold')
